@@ -3,6 +3,7 @@ package senseHuge.testgateway.ui;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,8 +27,11 @@ import senseHuge.util.OfflineBackupUtil;
 import senseHuge.util.SerialUtil;
 import senseHuge.util.SocketClientUtil;
 import senseHuge.util.XmlTelosbPackagePatternUtil;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -52,7 +56,7 @@ public class MainActivity extends FragmentActivity {
 	public static boolean isWork = false;
 	private static final String tag = "sensehuge:";
 	protected static final String tags = "sensehuge:";
-	
+
 	// public TelosbDao telosbDao;
 	public static MySQLiteDbHelper mDbhelper;
 	public static SQLiteDatabase mDb;
@@ -60,11 +64,11 @@ public class MainActivity extends FragmentActivity {
 	public SocketClientUtil socketClientUtil;
 	SerialUtil serialUtil = new SerialUtil();
 	HttpClientUtil httpClientUtil;
-//	Fragment_listNode fListNode;
+	// Fragment_listNode fListNode;
 	PackagePattern packagePattern = null;
 	public static XmlTelosbPackagePatternUtil xmlTelosbPackagePatternUtil;
 	public HaveData havadata = null;
-//	public ReceiveFromServer  receiveFromServer = null ;
+	// public ReceiveFromServer receiveFromServer = null ;
 	ListNodePrepare listNodePrepare;
 	// HaveData havadata = new HaveData();
 	List<String> list = new ArrayList<String>();
@@ -87,48 +91,64 @@ public class MainActivity extends FragmentActivity {
 			f_dataCenter, f_aboutUs;
 	Button serialPortSetting;
 	Button serverSetting;
-/*	Button sinkSetting;
-	Button alertSetting;
-	Button sinkCheck;
-	Button internetSetting;
-	Button wifiSetting;
-	Button dataCenter;*/
+	/*
+	 * Button sinkSetting; Button alertSetting; Button sinkCheck; Button
+	 * internetSetting; Button wifiSetting; Button dataCenter;
+	 */
 	Button aboutUs;
 	Button quit;
+
+	PendingIntent m_restartIntent;
+	
+	private UncaughtExceptionHandler m_handler = new UncaughtExceptionHandler() {
+		@Override
+		public void uncaughtException(Thread thread, Throwable ex) {
+			Log.d("wrong", "uncaught exception is catched!");
+			AlarmManager mgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+			mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 3000,
+					m_restartIntent);
+			System.exit(2);
+		}
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-//		fListNode = new Fragment_listNode();
-
+		// fListNode = new Fragment_listNode();
+		Intent intent = getIntent();
+		m_restartIntent = PendingIntent.getActivity(getApplicationContext(), 0,
+				intent, Intent.FLAG_ACTIVITY_NEW_TASK);
 		// 串口，服务器，节点监听事务
 		manager = getSupportFragmentManager();
 		listNodePrepare = new ListNodePrepare();
 		FragmentTransaction transaction = manager.beginTransaction();
 		f_serialPort = new Fragment_serialconfig();
 		f_server = new Fragment_serverconfig();
-	/*	f_listnode = new Fragment_listNode();
-		f_nodeSetting = new Fragment_nodeSetting();
-		f_alertSetting = new Fragment_alertSetting();*/
+		/*
+		 * f_listnode = new Fragment_listNode(); f_nodeSetting = new
+		 * Fragment_nodeSetting(); f_alertSetting = new Fragment_alertSetting();
+		 */
 		f_dataCenter = new Fragment_dataCenter();
 		f_aboutUs = new Fragment_aboutUs();
 
 		// 得到按钮以及设置按钮监听器
 		serialPortSetting = (Button) findViewById(R.id.serialPortSetting);
 		serverSetting = (Button) findViewById(R.id.serverSetting);
-		/*sinkSetting = (Button) findViewById(R.id.sinkSetting);
-		alertSetting = (Button) findViewById(R.id.alertSetting);
-		sinkCheck = (Button) findViewById(R.id.sinkCheck);
-		internetSetting = (Button) findViewById(R.id.internetSetting);
-		wifiSetting = (Button) findViewById(R.id.wifiSetting);
-		dataCenter = (Button) findViewById(R.id.dataCenter);*/
+		/*
+		 * sinkSetting = (Button) findViewById(R.id.sinkSetting); alertSetting =
+		 * (Button) findViewById(R.id.alertSetting); sinkCheck = (Button)
+		 * findViewById(R.id.sinkCheck); internetSetting = (Button)
+		 * findViewById(R.id.internetSetting); wifiSetting = (Button)
+		 * findViewById(R.id.wifiSetting); dataCenter = (Button)
+		 * findViewById(R.id.dataCenter);
+		 */
 		aboutUs = (Button) findViewById(R.id.aboutUs);
 		quit = (Button) findViewById(R.id.quit);
 
 		serialPortSetting.setOnClickListener(new ButtonClickListener());
 		serverSetting.setOnClickListener(new ButtonClickListener());
-	
+
 		quit.setOnClickListener(new ButtonClickListener());
 
 		// 默认启动事务：节点
@@ -137,6 +157,8 @@ public class MainActivity extends FragmentActivity {
 
 		init();
 		System.out.println("inited:");
+		
+		Thread.setDefaultUncaughtExceptionHandler(m_handler);
 	}
 
 	class ButtonClickListener implements OnClickListener {
@@ -158,7 +180,7 @@ public class MainActivity extends FragmentActivity {
 				transaction.commit();
 				break;
 			}
-			
+
 			case R.id.aboutUs:
 				transaction = manager.beginTransaction();
 				transaction.replace(R.id.fragment_container, f_aboutUs);
@@ -219,24 +241,23 @@ public class MainActivity extends FragmentActivity {
 	 * mainactivity 初始化
 	 */
 	public void init() {
-		String  IP ="192.168.10.62";
-		int port =30000;
+		String IP = "192.168.10.62";
+		int port = 30000;
 		socketClientUtil = new SocketClientUtil(IP, port);
 		new Thread(new ReceiveCMD()).start();
-		/*receiveFromServer = new ReceiveFromServer();
-		receiveFromServer.start();*/
-	/*	
-		LocalConfigService localConfigService = new LocalConfigService(
-				getBaseContext());
-		localConfigService.setConfig("webserver", "192.168.10.145");
-		// 初始化xml数据包格式并放入packagepattern中
-		xmlTelosbPackagePatternUtil = new XmlTelosbPackagePatternUtil(
-				getFilesDir().toString());
-		// 客户端，服务器，串口，等资源的初始化
-		httpClientUtil = new HttpClientUtil(getBaseContext());
-		*/
-		
-		
+		/*
+		 * receiveFromServer = new ReceiveFromServer();
+		 * receiveFromServer.start();
+		 */
+		/*
+		 * LocalConfigService localConfigService = new LocalConfigService(
+		 * getBaseContext()); localConfigService.setConfig("webserver",
+		 * "192.168.10.145"); // 初始化xml数据包格式并放入packagepattern中
+		 * xmlTelosbPackagePatternUtil = new XmlTelosbPackagePatternUtil(
+		 * getFilesDir().toString()); // 客户端，服务器，串口，等资源的初始化 httpClientUtil = new
+		 * HttpClientUtil(getBaseContext());
+		 */
+
 		httpserverState = new MySource();
 		serialState = new MySource();
 		ms = new MySource();
@@ -252,41 +273,44 @@ public class MainActivity extends FragmentActivity {
 		// havePackage.setValue(false);
 
 		// 创建数据库表
-	/*	mDbhelper = new MySQLiteDbHelper(MainActivity.this, "MyData.db", null, 1);
-		mDb = mDbhelper.getWritableDatabase();
-	    listNodePrepare.prepare();*/
-		
-		
+		/*
+		 * mDbhelper = new MySQLiteDbHelper(MainActivity.this, "MyData.db",
+		 * null, 1); mDb = mDbhelper.getWritableDatabase();
+		 * listNodePrepare.prepare();
+		 */
+
 		/*
 		 * httpserverState.setValue(true); serialState.setValue(true);
 		 * httpserverState.setValue(false);
 		 */
-		//准备节点信息
-	
-		
-	//	testBackup();
+		// 准备节点信息
+
+		// testBackup();
 	}
-	
-	
-	public void testBackup(){
+
+	public void testBackup() {
 		List<TelosbPackage> list = new ArrayList<TelosbPackage>();
-		for (int i = 0; i < 1024*80; i++) {   //在电脑+android上测试最大传输值为13.1m  1024*80
+		for (int i = 0; i < 1024 * 80; i++) { // 在电脑+android上测试最大传输值为13.1m
+												// 1024*80
 			TelosbPackage telosbPackage = new TelosbPackage();
 			telosbPackage.setCtype("C1");
 			telosbPackage.setId(i);
-			telosbPackage.setMessage("XXXXXXXXXXXXXXXX"+i);
+			telosbPackage.setMessage("XXXXXXXXXXXXXXXX" + i);
 			telosbPackage.setReceivetime(new Date());
 			telosbPackage.setNodeID("1");
 			list.add(telosbPackage);
 		}
 		OfflineBackupUtil offlineBackupUtil = new OfflineBackupUtil();
-		offlineBackupUtil.upLoadTelsob2WebServer(list, getFilesDir().toString());
-	/*	String fileName = getFilesDir().toString()+"/TelosbBackup.xml";
-		
-		OfflineBackupUtil offlineBackupUtil = new OfflineBackupUtil();
-		offlineBackupUtil.CreatBackUpFile(list, fileName);
-	//	offlineBackupUtil.deleteBackupFiel(getFilesDir().toString());
-		offlineBackupUtil.upLoadFile(fileName);*/
+		offlineBackupUtil
+				.upLoadTelsob2WebServer(list, getFilesDir().toString());
+		/*
+		 * String fileName = getFilesDir().toString()+"/TelosbBackup.xml";
+		 * 
+		 * OfflineBackupUtil offlineBackupUtil = new OfflineBackupUtil();
+		 * offlineBackupUtil.CreatBackUpFile(list, fileName); //
+		 * offlineBackupUtil.deleteBackupFiel(getFilesDir().toString());
+		 * offlineBackupUtil.upLoadFile(fileName);
+		 */
 	}
 
 	public void ProcessData() {
@@ -342,78 +366,60 @@ public class MainActivity extends FragmentActivity {
 			}
 		}
 	}
-	
-	/*public class ReceiveFromServer extends Thread {
-        int num;
-        byte [] buffer = new byte [1255];
-		@Override
+
+	/*
+	 * public class ReceiveFromServer extends Thread { int num; byte [] buffer =
+	 * new byte [1255];
+	 * 
+	 * @Override public void run() { // TODO Auto-generated method stub
+	 * super.run(); System.out.println(" Tread inited"); while(true){ //
+	 * while(socketClientUtil.getStatus() == "connected"){ try { num =
+	 * socketClientUtil.getIs().available(); // num =
+	 * mSerialPort.getInputStream().available(); } catch (IOException e1) { //
+	 * TODO Auto-generated catch block e1.printStackTrace(); } if ( num > 0) {
+	 * try {
+	 * 
+	 * socketClientUtil.getIs().read(buffer,0,num);
+	 * 
+	 * // socketClientUtil.getIs().
+	 * 
+	 * System.out.println("+++++++++Receive form Server :+++++++++++++"+buffer);
+	 * } catch (IOException e) { // TODO Auto-generated catch block
+	 * e.printStackTrace(); } } }
+	 * 
+	 * 
+	 * }
+	 * 
+	 * }
+	 */
+	public class ReceiveCMD implements Runnable {
+
 		public void run() {
-			// TODO Auto-generated method stub
-			super.run();
-			System.out.println(" Tread inited");
-			while(true){
-//				while(socketClientUtil.getStatus() == "connected"){
-				try {
-				    num = socketClientUtil.getIs().available();
-				//	num  = mSerialPort.getInputStream().available();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				if ( num > 0) {
-					try {
-						
-						socketClientUtil.getIs().read(buffer,0,num);
-						
-					//	socketClientUtil.getIs().
-						
-						System.out.println("+++++++++Receive form Server :+++++++++++++"+buffer);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
-			
-			
-		}
-		
-	}
-	*/
-	public  class ReceiveCMD implements Runnable
-	{
-		
-		
-		public void run()
-		{
-			while(true){
+			while (true) {
 				if (socketClientUtil == null) {
 					continue;
 				}
-				if (socketClientUtil.cmds.size()>0) {
-					System.out.println("CMD form server:"+socketClientUtil.cmds.get(0));
-					
+				if (socketClientUtil.cmds.size() > 0) {
+					System.out.println("CMD form server:"
+							+ socketClientUtil.cmds.get(0));
+
 					try {
 						if (mSerialPort == null) {
 							socketClientUtil.cmds.remove(0);
 							continue;
 						}
-						
-						
-						mSerialPort.getOutputStream().write(socketClientUtil.cmds.get(0).toString().getBytes());
+
+						mSerialPort.getOutputStream().write(
+								socketClientUtil.cmds.get(0).toString()
+										.getBytes());
 					} catch (IOException e) {
-						
+
 						e.printStackTrace();
 					}
 				}
 			}
 		}
 	}
-
-
-	
-	
-	
 
 	public class HaveData extends Thread {
 		@Override
@@ -442,112 +448,71 @@ public class MainActivity extends FragmentActivity {
 					/**
 					 * 向socket 服务器发送数据
 					 */
-					
-					
+
 					if (socketClientUtil.isConneted) {
 						socketClientUtil.sendData(telosbData);
-					}else {
-						
-						System.out.println("重连服务器***************************************************");
+					} else {
+
+						System.out
+								.println("重连服务器***************************************************");
 						socketClientUtil.reConnectSocket();
 						serialUtil.clear();
 					}
-					
-					
-					
-					
-                    System.gc();
 
-			
+					System.gc();
+
 				}
 			}
 		}
 	}
-/*	public class HaveData extends Thread {
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			super.run();
-			// 获取到的数据包
-			String headTest = "00FFFF";
-			TelosbPackage telosbPackage = new TelosbPackage();
-			int i;
-			while (isWork) {
-				i = serialUtil.findhead(headTest);
-				if (i < 0 && serialUtil.stringBuffer.length() > 6) {
-					serialUtil.delete(serialUtil.stringBuffer.length() - 6);
-				} else if (i > 0) {
-					serialUtil.delete(i);
-				}
-				if (serialUtil.stringBuffer.length() > 300) {
-					System.out
-					.println("++++++++++++++++++++++++++++++++++++++++++++++++++");
-					System.out.println(serialUtil.stringBuffer.toString());
-					System.out
-					.println("+++++++++++++++++++++++++++++++++++++++++++++");
-					String telosbData = serialUtil.getFirstData();
-					System.out.println("receive package:" + telosbData);
-					
-					if (telosbData == "") {
-						System.out.println("empty");
-						
-					} else {
-						System.out
-						.println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-						try {
-							// 数据解析
-							System.out.println(xmlTelosbPackagePatternUtil
-									.parseTelosbPackage(telosbData).getCtype()
-									+ ":%%%%%%%%%%%%%%");
-						} catch (Exception e) {
-							System.out.println("异常");
-							e.printStackTrace();
-							continue;
-						}
-						// ;
-						PackagePattern telosbPackagePattern = null;
-						try {
-							// 数据解析
-							telosbPackagePattern = xmlTelosbPackagePatternUtil
-									.parseTelosbPackage(telosbData);
-						} catch (Exception e) {
-							System.out.println("异常");
-							e.printStackTrace();
-							continue;
-							
-						}
-						if (httpClientUtil.PostTelosbData("", telosbData)) {
-							telosbPackage.setStatus("已上传");
-						} else {
-							telosbPackage.setStatus("未上传");
-						}
-						
-						telosbPackage.setCtype(telosbPackagePattern.ctype);
-						telosbPackage.setMessage(telosbData);
-						telosbPackage.setNodeID(telosbPackagePattern.nodeID);
-						ContentValues values = new ContentValues(); // 相当于map
-						values.put("message", telosbPackage.getMessage());
-						values.put("Ctype", telosbPackage.getCtype());
-						values.put("NodeID", telosbPackage.nodeID);
-						
-						values.put("status", telosbPackage.getStatus());
-						Date date = new Date();
-						SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
-								"yyyy-MM-dd hh:mm:ss");
-						values.put("receivetime", simpleDateFormat.format(date));
-						mDb.insert("Telosb", null, values);
-						if (telosbData != null) {
-							list.add(telosbData);
-							Packagesingnal();
-						}
-						System.out.println(list.size() + "_____________");
-						System.gc();
-					}
-				}
-			}
-		}
-	}
-*/
+
+	/*
+	 * public class HaveData extends Thread {
+	 * 
+	 * @Override public void run() { // TODO Auto-generated method stub
+	 * super.run(); // 获取到的数据包 String headTest = "00FFFF"; TelosbPackage
+	 * telosbPackage = new TelosbPackage(); int i; while (isWork) { i =
+	 * serialUtil.findhead(headTest); if (i < 0 &&
+	 * serialUtil.stringBuffer.length() > 6) {
+	 * serialUtil.delete(serialUtil.stringBuffer.length() - 6); } else if (i >
+	 * 0) { serialUtil.delete(i); } if (serialUtil.stringBuffer.length() > 300)
+	 * { System.out
+	 * .println("++++++++++++++++++++++++++++++++++++++++++++++++++");
+	 * System.out.println(serialUtil.stringBuffer.toString()); System.out
+	 * .println("+++++++++++++++++++++++++++++++++++++++++++++"); String
+	 * telosbData = serialUtil.getFirstData();
+	 * System.out.println("receive package:" + telosbData);
+	 * 
+	 * if (telosbData == "") { System.out.println("empty");
+	 * 
+	 * } else { System.out
+	 * .println("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"); try { // 数据解析
+	 * System.out.println(xmlTelosbPackagePatternUtil
+	 * .parseTelosbPackage(telosbData).getCtype() + ":%%%%%%%%%%%%%%"); } catch
+	 * (Exception e) { System.out.println("异常"); e.printStackTrace(); continue;
+	 * } // ; PackagePattern telosbPackagePattern = null; try { // 数据解析
+	 * telosbPackagePattern = xmlTelosbPackagePatternUtil
+	 * .parseTelosbPackage(telosbData); } catch (Exception e) {
+	 * System.out.println("异常"); e.printStackTrace(); continue;
+	 * 
+	 * } if (httpClientUtil.PostTelosbData("", telosbData)) {
+	 * telosbPackage.setStatus("已上传"); } else { telosbPackage.setStatus("未上传");
+	 * }
+	 * 
+	 * telosbPackage.setCtype(telosbPackagePattern.ctype);
+	 * telosbPackage.setMessage(telosbData);
+	 * telosbPackage.setNodeID(telosbPackagePattern.nodeID); ContentValues
+	 * values = new ContentValues(); // 相当于map values.put("message",
+	 * telosbPackage.getMessage()); values.put("Ctype",
+	 * telosbPackage.getCtype()); values.put("NodeID", telosbPackage.nodeID);
+	 * 
+	 * values.put("status", telosbPackage.getStatus()); Date date = new Date();
+	 * SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
+	 * "yyyy-MM-dd hh:mm:ss"); values.put("receivetime",
+	 * simpleDateFormat.format(date)); mDb.insert("Telosb", null, values); if
+	 * (telosbData != null) { list.add(telosbData); Packagesingnal(); }
+	 * System.out.println(list.size() + "_____________"); System.gc(); } } } } }
+	 */
 	public HaveData getHaveData() {
 		return new HaveData();
 	}
