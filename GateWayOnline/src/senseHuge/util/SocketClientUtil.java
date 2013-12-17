@@ -16,6 +16,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.run.park.Impl.AnalysisDataType;
+import com.run.park.entity.DataType;
+import com.run.park.entity.User;
+
 import senseHuge.model.TelosbPackage;
 import senseHuge.testgateway.ui.MainActivity;
 
@@ -44,7 +48,7 @@ public class SocketClientUtil extends Thread {
 		super();
 		IP = iP;
 		this.port = port;
-		s = getSocket(iP,port);
+		s = getSocket(IP,this.port);
 		
 	}
  
@@ -97,14 +101,15 @@ public class SocketClientUtil extends Thread {
 		
 		System.out.println("started**************");
 		isConneted = true;
-		sendData(MainActivity.SocketKey);
+		User user = new User("junfei", "junfei");
+		sendData(user);
 		status = true;
 		new ReadThread(s).start();
 		
 		return s;
 	}
 
-	public String sendData(String data){
+	public String sendData(Object data){
 		try
 		{
 			// 将用户在文本框内输入的内容写入网络
@@ -186,8 +191,8 @@ public class SocketClientUtil extends Thread {
 				return "fail";
 			}
 		}
-		sendData(telosbPackage.getNodeID()+":"+telosbPackage.getCtype()+":"+telosbPackage.getReceivetime()+":"+telosbPackage.getMessage());
-		
+	//	sendData(telosbPackage.getNodeID()+":"+telosbPackage.getCtype()+":"+telosbPackage.getReceivetime()+":"+telosbPackage.getMessage());
+	
 		
 		return "success";
 		
@@ -250,7 +255,7 @@ public class SocketClientUtil extends Thread {
 								s.close();
 							}
 							isConneted = false;
-							MainActivity.socketPermisson = false;
+							MainActivity.serverConnect = false;
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -269,11 +274,11 @@ public class SocketClientUtil extends Thread {
 
 	public void parseCommand(String content){
 	    if (content.equals("FF")) {
-		    MainActivity.socketPermisson = true;
+		    MainActivity.serverConnect = true;
 			isConneted = true;
 		}else if (content.equals("00")) {
 			deleteSocket();
-		}else {
+		}else {               // 接收到其他命令  直接发送到串口
 			try {
 				MainActivity.mSerialPort.getOutputStream().write(
 						content.getBytes());

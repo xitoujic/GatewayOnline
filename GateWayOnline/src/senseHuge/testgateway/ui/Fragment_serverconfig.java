@@ -53,13 +53,13 @@ public class Fragment_serverconfig extends Fragment {
 		sp = ctx.getSharedPreferences("myconfig", 0);
 		editor = sp.edit();*/
 		
-		if (MainActivity.sp.getString("serverAddr", "none") != null) {
-			text.setText(MainActivity.sp.getString("serverAddr", "none"));
+		if (MainActivity.sp.getString("serverAddr", "192.168.0.1") != null) {
+			text.setText(MainActivity.sp.getString("serverAddr", "192.168.0.1"));
 		}else {
 			text.setText("192.168.0.1");
 		}
-		if (MainActivity.sp.getString("serverCOM", "none") != null) {
-			textCOM.setText(MainActivity.sp.getString("serverCOM", "none"));
+		if (MainActivity.sp.getString("serverCOM", "8080") != null) {
+			textCOM.setText(MainActivity.sp.getString("serverCOM", "8080"));
 		}else {
 			textCOM.setText("1024");
 		}

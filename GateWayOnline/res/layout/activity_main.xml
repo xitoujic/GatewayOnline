@@ -18,8 +18,7 @@
         <Button
             android:id="@+id/serialPortSetting"
             android:layout_width="fill_parent"
-            android:layout_height="50dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
             android:text="@string/serialPortSetting" />
@@ -28,8 +27,7 @@
         <Button
             android:id="@+id/serverSetting"
             android:layout_width="fill_parent"
-            android:layout_height="50dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
             android:text="@string/serverSetting" />
@@ -91,8 +89,7 @@
         <Button
             android:id="@+id/aboutUs"
             android:layout_width="fill_parent"
-            android:layout_height="50dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
             android:text="@string/aboutUs" />
@@ -100,8 +97,7 @@
         <Button
             android:id="@+id/quit"
             android:layout_width="fill_parent"
-            android:layout_height="50dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
             android:text="@string/quit" />

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="GBK"?>
+
+<DataTypes>
+  
+  <DataType>
+ 
+    <Type type="string">C1</Type>
+    
+    <Name type="string"></Name>
+   
+    <MapTable type="string">c1</MapTable>
+   
+    <UseRule type="string">c1</UseRule>
+   
+    <Propertys>
+     
+	  <Property Mean="" ColTable="Moteid_ID" Index="11" Lenght="2" Type="int"/>
+	   <Property Mean="" ColTable="NodeType" Index="62" Lenght="2" Type="int"/>
+	    <Property Mean="" ColTable="Cluster_ID" Index="13" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="" Index="0" Lenght="11" Type="string"/>      
+     
+      <Property Mean="" ColTable="TimestampSend_TM" Index="15" Lenght="4" Type="string"/>
+      <Property Mean="" ColTable="" Index="19" Lenght="4" Type="string"/>
+      <Property Mean="" ColTable="Sequence_ID" Index="23" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="CurrentSendInterval_TM" Index="25" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="Parent_ID" Index="27" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="" Index="29" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="Power" Index="31" Lenght="1" Type="int"/>
+      <Property Mean="" ColTable="" Index="32" Lenght="4" Type="int"/>
+      <Property Mean="" ColTable="" Index="36" Lenght="4" Type="int"/>
+      <Property Mean="" ColTable="" Index="40" Lenght="4" Type="int"/>
+      <Property Mean="" ColTable="" Index="44" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="ADC_Voltage_ID" Index="46" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="Humidity_ID" Index="48" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="Temperature_ID" Index="50" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="Light_ID" Index="52" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="" Index="54" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="CO2_ID" Index="56" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="" Index="58" Lenght="4" Type="int"/>
+     
+      <Property Mean="" ColTable="Mark_ID" Index="64" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="HopCount_ID" Index="66" Lenght="1" Type="int"/>
+      <Property Mean="" ColTable="Pathlength_ID" Index="67" Lenght="1" Type="int"/>
+	  <Property Mean="" ColTable="NodesOnPath_TX" Index="68" Lenght="20" Type="unknown"/>
+      <Property Mean="" ColTable="" Index="88" Lenght="4" Type="int"/>
+      <Property Mean="" ColTable="" Index="92" Lenght="5" Type="string"/>
+    </Propertys>
+    
+    <DataLength type="int">97</DataLength>
+  </DataType>
+  
+  <DataType>
+   
+    <Type type="string">C2</Type>
+   
+    <Name type="string"></Name>
+   
+    <MapTable type="string">c2</MapTable>
+   
+    <UseRule type="string">c2</UseRule>
+   
+    <Propertys>
+     
+      <Property Mean="" ColTable="" Index="0" Lenght="11" Type="string"/>
+      <Property Mean="" ColTable="Moteid_ID" Index="11" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="Cluster_ID" Index="13" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="TimestampSend_TM" Index="15" Lenght="4" Type="string"/>
+      <Property Mean="" ColTable="" Index="19" Lenght="4" Type="int"/>
+      <Property Mean="" ColTable="" Index="23" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="" Index="25" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="NeighborSize_ID" Index="27" Lenght="1" Type="int"/>
+      <Property Mean="" ColTable="NeighborId_TX" Index="28" Lenght="15" Type="unknown"/>
+      <Property Mean="" ColTable="RSSI_TX" Index="43" Lenght="15" Type="unknown"/>
+      <Property Mean="" ColTable="LQI_TX" Index="58" Lenght="15" Type="unknown"/>
+      <Property Mean="" ColTable="ETX_TX" Index="73" Lenght="15" Type="unknown"/>
+      <Property Mean="" ColTable="" Index="88" Lenght="7" Type="string"/>
+    </Propertys>
+    
+    <DataLength type="int">95</DataLength>
+  </DataType>
+  
+  <DataType>
+    
+    <Type type="string">C3</Type>
+    
+    <Name type="string"></Name>
+    
+    <MapTable type="string">c3</MapTable>
+    
+    <UseRule type="string">c3</UseRule>
+   
+    <Propertys>
+      
+      <Property Mean="" ColTable="" Index="0" Lenght="11" Type="string"/>
+      <Property Mean="" ColTable="Moteid_ID" Index="11" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="Cluster_ID" Index="13" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="TimestampSend_TM" Index="15" Lenght="4" Type="string"/>
+      <Property Mean="" ColTable="" Index="19" Lenght="4" Type="long"/>
+      <Property Mean="" ColTable="" Index="23" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="" Index="25" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="RadioOnTimeCounter_ID" Index="27" Lenght="4" Type="long"/>
+      <Property Mean="" ColTable="ReceiveCounter_ID" Index="31" Lenght="4" Type="long"/>
+      <Property Mean="" ColTable="TransmitCounter_ID" Index="35" Lenght="4" Type="long"/>
+      <Property Mean="" ColTable="ReceiveOverflowDropCounter_ID" Index="39" Lenght="4" Type="long"/>
+      <Property Mean="" ColTable="SelfTransmitCounter_ID" Index="43" Lenght="4" Type="long"/>
+      <Property Mean="" ColTable="TransmitNoACKRetransmitCounter_ID" Index="47" Lenght="4" Type="long"/>
+      <Property Mean="" ColTable="TransmitNoACKDropCounter_ID" Index="51" Lenght="4" Type="long"/>
+      <Property Mean="" ColTable="RetransmitCounter_ID" Index="55" Lenght="4" Type="long"/>
+      <Property Mean="" ColTable="LoopCounter_ID" Index="59" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="DuplicateCounter_ID" Index="61" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="SuccAckCounter_ID" Index="63" Lenght="4" Type="long"/>
+      <Property Mean="" ColTable="ParentChangeCounter_ID" Index="67" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="TaskPostCounter_ID" Index="69" Lenght="4" Type="long"/>
+      <Property Mean="" ColTable="TaskExeCounter_ID" Index="73" Lenght="4" Type="long"/>
+      <Property Mean="" ColTable="NoParentCounter_ID" Index="77" Lenght="2" Type="int"/>
+      <Property Mean="" ColTable="TaskSendFailCounter_ID" Index="79" Lenght="4" Type="long"/>
+      <Property Mean="" ColTable="TableEvictCounter_ID" Index="83" Lenght="4" Type="long"/>
+      <Property Mean="" ColTable="MacIBackOffCounter_ID" Index="87" Lenght="4" Type="long"/>
+      <Property Mean="" ColTable="MacCBackOffCounter_ID" Index="91" Lenght="4" Type="long"/>
+      <Property Mean="" ColTable="" Index="95" Lenght="5" Type="string"/>
+	  <Property Mean="" ColTable="" Index="100" Lenght="6" Type="string"/>
+    </Propertys>
+    
+    <DataLength type="int">106</DataLength>
+  </DataType>
+</DataTypes>

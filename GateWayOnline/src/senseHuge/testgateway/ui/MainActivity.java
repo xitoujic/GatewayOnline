@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.List;
 
 import com.example.testgateway.R;
+import com.run.park.Impl.AnalysisDataType;
+import com.run.park.entity.DataType;
 
 import senseHuge.Dao.MySQLiteDbHelper;
 import senseHuge.listener.Listenable;
@@ -63,8 +65,9 @@ public class MainActivity extends FragmentActivity {
 	public static	Context ctx ;
 	public static  SharedPreferences sp ;
 	public static  Editor editor ;
-	public static  boolean socketPermisson = false;
+	//public static  boolean socketPermisson = false;
 	 public static String SocketKey = "username:key:produceID";
+	public static string packagePath = null;
 
 	// public TelosbDao telosbDao;
 	public static MySQLiteDbHelper mDbhelper;
@@ -87,6 +90,7 @@ public class MainActivity extends FragmentActivity {
 	public static boolean serialPortConnect = false;// 串口是否连接
 
 	public RingBuffer<String> ringBuffer = new RingBuffer<String>(capibity);
+	
 
 	// 调用以下资源的getvalue方法也可以判断当前的连接状态
 	MySource ms;// 这个变量应该是多余的，待删除
@@ -114,6 +118,11 @@ public class MainActivity extends FragmentActivity {
 		// fListNode = new Fragment_listNode();
 
 		// 串口，服务器，节点监听事务
+		ctx = this.getBaseContext();
+		sp = ctx.getSharedPreferences("myconfig", 0);
+		editor = sp.edit();
+		
+		
 		manager = getSupportFragmentManager();
 		listNodePrepare = new ListNodePrepare();
 		FragmentTransaction transaction = manager.beginTransaction();
@@ -191,6 +200,7 @@ public class MainActivity extends FragmentActivity {
 			}
 		}
 	}
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -235,19 +245,18 @@ public class MainActivity extends FragmentActivity {
 	 */
 	@SuppressLint("NewApi")
 	public void init() {
-		ctx = this.getBaseContext();
-		sp = ctx.getSharedPreferences("myconfig", 0);
-		editor = sp.edit();
-		String IP = "192.168.10.139";
-		String port = "1020";
-		if (sp.getString("serverAddr", "none") != null) {
-			IP =sp.getString("serverAddr", "none");
+		
+		String IP = "192.168.10.5";
+		String port = "1030";
+		if (sp.getString("serverAddr", null) != null) {
+			IP =sp.getString("serverAddr", "192.168.10.5");
 		}
-		if (sp.getString("serverCOM", "none") != null) {
-			port =sp.getString("serverCOM", "none");
+		if (sp.getString("serverCOM", null) != null) {
+			port =sp.getString("serverCOM", "1030");
 		}
 	//	IP = "192.168.10.62";
 	//	new Thread(new ReceiveCMD()).start();
+		System.out.println(port);
 		socketClientUtil = new SocketClientUtil(IP, Integer.valueOf(port));
 		
 		/*
@@ -493,7 +502,8 @@ public class MainActivity extends FragmentActivity {
 
 					
 
-					if (socketClientUtil.isConneted && socketPermisson) {
+				
+    				 if (socketClientUtil.isConneted && serverConnect) {
 						//socketClientUtil.sendData(telosbData);
 						if (telosbData != null &&telosbData.length()>1) {
 							dataString = MainActivity.gatewayName + "::"
@@ -501,7 +511,13 @@ public class MainActivity extends FragmentActivity {
 							+ telosbData.substring(36, 38) + ":"
 							+ telosbData.substring(16);
 							if (!telosbData.substring(36, 38).equals("C4")) {
-								socketClientUtil.sendData(dataString+"0000000000");
+								//socketClientUtil.sendData(dataString+"0000000000");
+							DataType temp= 	 AnalysisDataType.getAnalysisDataType().analysis(dataString);
+							if (temp == null) {
+								continue;
+							}
+								socketClientUtil.sendData(temp);
+								
 							}
 							
 						}
@@ -517,7 +533,7 @@ public class MainActivity extends FragmentActivity {
 						count = count++ % 50;
 						
 						serialUtil.clear();
-					}else if (!socketPermisson) {
+					}else if (!serverConnect) {
 						socketClientUtil.sendData(SocketKey);
 					}
 
@@ -602,5 +618,6 @@ public class MainActivity extends FragmentActivity {
 	public static void setSerialNum(String serialNum) {
 		MainActivity.serialNum = serialNum;
 	}
-
+	
+  
 }
