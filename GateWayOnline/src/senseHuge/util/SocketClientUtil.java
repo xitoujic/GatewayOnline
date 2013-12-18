@@ -101,6 +101,7 @@ public class SocketClientUtil extends Thread {
 		
 		System.out.println("started**************");
 		isConneted = true;
+		MainActivity.serverConnect = true;
 		User user = new User("junfei", "junfei");
 		sendData(user);
 		status = true;

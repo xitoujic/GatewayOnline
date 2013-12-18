@@ -52,7 +52,8 @@
     </LinearLayout>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+         android:layout_marginTop="50dp" >
 
         <Button
             android:id="@+id/close"
@@ -61,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="42dp"
             android:layout_marginLeft="50dp"
-            android:layout_marginRight="200dp"
+            android:layout_marginRight="400dp"
             android:text="关闭" />
 
         <Button
@@ -70,6 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="42dp"
+             android:layout_marginLeft="250dp"
             android:text="连接" />
     </RelativeLayout>
 

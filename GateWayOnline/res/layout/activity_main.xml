@@ -31,7 +31,14 @@
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
             android:text="@string/serverSetting" />
-
+         <Button
+            android:id="@+id/linkSetting"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="网络设置" />
+        
  <!--        <Button
             android:id="@+id/sinkSetting"
             android:layout_width="fill_parent"
